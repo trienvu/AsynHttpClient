@@ -78,14 +78,14 @@ public class RegisterActivity extends Activity {
 			// When Email entered is Valid
 			if (Utility.validate(email)) {
 				// Put Http parameter name with value of Name Edit View control
-			//	params.put("name", name);
+				// params.put("name", name);
 				// Put Http parameter username with value of Email Edit View
 				// control
 				params.put("email", email);
 				// Put Http parameter password with value of Password Edit View
 				// control
 				params.put("password", password);
-				// Invoke RESTful Web Service with Http parameters			
+				// Invoke RESTful Web Service with Http parameters
 				invokeWS(params);
 			}
 			// When Email is invalid
@@ -111,11 +111,12 @@ public class RegisterActivity extends Activity {
 	public void invokeWS(RequestParams params) {
 		// Show Progress Dialog
 		prgDialog.show();
+		RequestParams params1 = new RequestParams();
 		// Make RESTful webservice call using AsyncHttpClient object
 		AsyncHttpClient client = new AsyncHttpClient();
-		params = null;
-		client.get("http://health166.freepp.com/kikilink/api/register/abc@gmail.com/xxx",
-				params, new JsonHttpResponseHandler() {
+		client.get(
+				"http://health166.freepp.com/kikilink/api/register/abc@gmail.com/xxx",
+				params1, new JsonHttpResponseHandler() {
 					@Override
 					public void onSuccess(int statusCode, Header[] headers,
 							JSONObject response) {
@@ -152,7 +153,7 @@ public class RegisterActivity extends Activity {
 
 						}
 					}
-					
+
 					@Override
 					public void onFailure(int statusCode, Header[] headers,
 							Throwable throwable, JSONObject errorResponse) {
@@ -177,7 +178,33 @@ public class RegisterActivity extends Activity {
 									"Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]",
 									Toast.LENGTH_LONG).show();
 						}
-					}				
+					}
+
+					@Override
+					public void onFailure(int statusCode, Header[] headers,
+							String responseString, Throwable throwable) {
+						// Hide Progress Dialog
+						prgDialog.hide();
+						// When Http response code is '404'
+						if (statusCode == 404) {
+							Toast.makeText(getApplicationContext(),
+									"Requested resource not found",
+									Toast.LENGTH_LONG).show();
+						}
+						// When Http response code is '500'
+						else if (statusCode == 500) {
+							Toast.makeText(getApplicationContext(),
+									"Something went wrong at server end",
+									Toast.LENGTH_LONG).show();
+						}
+						// When Http response code other than 404, 500
+						else {
+							Toast.makeText(
+									getApplicationContext(),
+									"Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]",
+									Toast.LENGTH_LONG).show();
+						}
+					}
 				});
 
 	}
